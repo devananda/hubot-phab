@@ -11,10 +11,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/oehokie/hubot-phabricator.git"
+    "url": "git://github.com/oehokie/hubot-phab.git"
   },
   "bugs": {
-    "url": "https://github.com/oehokie/hubot-phabricator/issues"
+    "url": "https://github.com/oehokie/hubot-phab/issues"
   },
   "dependencies": {
     "canduit": "~1.0.0"
