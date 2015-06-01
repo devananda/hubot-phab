@@ -1,8 +1,8 @@
 {
-  "name": "hubot-phabricator",
-  "description": "A hubot script to expand references to Phabricator objects",
-  "version": "1.0.1",
-  "author": "David Lynch <kemayo@gmail.com>",
+  "name": "hubot-phab",
+  "description": "Expansion to hubot-phabricator",
+  "version": "1.0.2",
+  "author": "Matt Martz <matt.martz@gmail.com>",
   "license": "MIT",
   "keywords": [
     "hubot",
@@ -11,10 +11,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/kemayo/hubot-phabricator.git"
+    "url": "git://github.com/oehokie/hubot-phabricator.git"
   },
   "bugs": {
-    "url": "https://github.com/kemayo/hubot-phabricator/issues"
+    "url": "https://github.com/oehokie/hubot-phabricator/issues"
   },
   "dependencies": {
     "canduit": "~1.0.0"
