@@ -2,7 +2,7 @@
 
 Auto-reply with descriptions and links to phabricator objects.  Also see what tasks are assigned to who.
 
-Based on `hubot-phabricator` and translated into JS
+Based on `hubot-phabricator` and translated into JS because coffee is for drinking only
 
 ## Installation
 
@@ -24,7 +24,7 @@ Then add `"hubot-phab"` to `external-scripts.json`
 
 Hubot will listen for you mentioning something that sounds like a phabricator object, and will attempt to expand upon it.
 
-## Examples
+## Examples (working)
 
     <matt> Hey, I just submitted D1234, could everyone take a look?
     <hubot> ^ D1234: do awesome things that would be specified better in a real differential - https://secure.phabricator.com/D1234
@@ -49,6 +49,9 @@ Hubot will listen for you mentioning something that sounds like a phabricator ob
 	<hubot> * T92 - Bot improvements: http://phabricatorlink/T92
 
 ## Coming soon (?, in my free time)
-	- [ ] Close Tasks with `hubot close T81`
-	- [ ] Close Tasks with comment ala `hubot close T12 with comment closing because it's done
-	- [ ] Commenting on tasks... `hubot comment T12 this is the comment part of it
+
+- Close Tasks with `hubot close T81`
+- Close Tasks with comment ala `hubot close T12 with comment closing because it's done
+- Commenting on tasks... `hubot comment T12 this is the comment part of it
+- Team Standup `hubot standup` ...  list of members with assigned tasks in markdown format?
+- Related Tasks search `hubot task with <query>` search title of task that contains query
