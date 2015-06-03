@@ -48,10 +48,12 @@ Hubot will listen for you mentioning something that sounds like a phabricator ob
     <hubot> * T81 - Refactor Code: http://phab.amida-tech.com/T81
 	<hubot> * T92 - Bot improvements: http://phabricatorlink/T92
 
+	<matt> hubot scrum
+	<hubot> (responds with slack-attachment messages with individual member tasks).  If not using slack, responds with a title and body for each user
+
 ## Coming soon (?, in my free time)
 
 - Close Tasks with `hubot close T81`
 - Close Tasks with comment ala `hubot close T12 with comment closing because it's done
 - Commenting on tasks... `hubot comment T12 this is the comment part of it
-- Team Standup `hubot standup` ...  list of members with assigned tasks in markdown format?
 - Related Tasks search `hubot task with <query>` search title of task that contains query

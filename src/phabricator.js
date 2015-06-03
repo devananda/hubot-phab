@@ -1,4 +1,5 @@
 var createCanduit = require('canduit');
+var async = require('async');
 
 var canduitConfig = {
     user: process.env.HUBOT_PHABRICATOR_USER,
@@ -7,7 +8,106 @@ var canduitConfig = {
 };
 
 module.exports = function(robot) {
-    //CLOSE not working yet...
+    function taskQuery(conduit, user, msg, callback) {
+        var pretext = "";
+        if (user.tQindex && user.tQlength) {
+            pretext = user.tQindex + " / " + user.tQlength + ": ";
+        }
+        var attachmentsObj = [{
+            //            color: "good",
+            //            pretext: user + " has helped me " + visitorCount + " times",
+            //            title: randomize(slackResponseTitle),
+            //            text: msg,
+            //            fallback: msg
+        }];
+        conduit.exec('maniphest.query', {
+            ownerPHIDs: [user.phid],
+            status: "status-open"
+        }, function(error2, results2) {
+            if (error2) {
+                console.log("error2: ", error2);
+                callback(error2);
+            } else {
+                var keys = Object.keys(results2);
+                if (keys.length === 0) {
+                    attachmentsObj[0].color = "danger";
+                    attachmentsObj[0].title = pretext + "No Open Tasks for " + user.realName + " (" + user.userName + ")";
+                    //msg.send(pretext + "No Open Tasks for " + user.realName + " (" + user.userName + ")");
+                } else {
+                    attachmentsObj[0].color = "good";
+                    attachmentsObj[0].title = pretext + "Showing Open Tasks for " + user.realName + " (" + user.userName + ")";
+                    //msg.send(pretext + "Showing Open Tasks for " + user.realName + " (" + user.userName + ")");
+                }
+                var body = "";
+                var newline = "";
+                for (var i = 0; i <= keys.length; i++) {
+                    if (i === keys.length) {
+                        attachmentsObj[0].text = body;
+                        attachmentsObj[0].fallback = body;
+                        console.log(JSON.stringify(attachmentsObj));
+                        callback(null, attachmentsObj);
+                    } else {
+                        var info = results2[keys[i]];
+                        body += newline + "[] " + info.objectName + " - " + info.title + ": " + info.uri;
+                        newline = "\n";
+                        //msg.send("[] " + info.objectName + " - " + info.title + ": " + info.uri);
+                    }
+                }
+            }
+        });
+    }
+
+    robot.respond(/standup | stand up | scrum/i, function(msg) {
+        createCanduit(canduitConfig, function(err, conduit) {
+            if (err) {
+                console.log("error:", err);
+                return msg.send("ERROR: " + err);
+            } else {
+                conduit.exec('user.query', {}, function(error, results) {
+                    if (error) {
+                        console.log("error: ", error);
+                        return;
+                    } else {
+                        var i = 1;
+                        async.eachSeries(results, function(user, cb) {
+                            user.tQindex = i;
+                            user.tQlength = results.length;
+                            if (user.userName === 'admin') {
+                                cb();
+                            } else {
+                                taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                    if (err2) {
+                                        console.log("error2: ", err2);
+                                    } else {
+                                        if (robot.adapterName == "slack") {
+                                            robot.emit('slack-attachment', {
+                                                channel: msg.envelope.room,
+                                                content: slackMessage,
+                                                username: "hubot",
+                                                text: ""
+                                            });
+                                        } else {
+                                            msg.send(slackMessage[0].title);
+                                            msg.send(slackMessage[0].text);
+                                        }
+                                        setTimeout(function() {
+                                            i++;
+                                            cb();
+                                        }, 1000);
+                                    }
+                                });
+                            }
+                        }, function(err) {
+                            return;
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    /*
+    //CLOSE, but not working yet...
     robot.respond(/(?:^|[\[\s][Cc][Ll][Oo][Ss][Ee]\s?)([TDPQFV][0-9]+|r[A-Z]+[a-f0-9]+)(?:\s*(-v))?(?=\W|$)/g, function(msg) {
         console.log("close ",msg.match);
         createCanduit(canduitConfig, function(err, conduit) {
@@ -22,7 +122,8 @@ module.exports = function(robot) {
                     match = match.trim();
                     match = match.slice(1, match.length);
                     console.log("match final: ",match);
-                    /*
+                    */
+    /*
                     conduit.exec('maniphest.update', {
                         id: Number(match),
                         status: "resolved",
@@ -36,10 +137,10 @@ module.exports = function(robot) {
                         }
                     });
 */
+    /*                }
                 }
-            }
-        });
-    });
+            });
+        });*/
     robot.hear(/(?:^|[\[\s])([TDPQFV][0-9]+|r[A-Z]+[a-f0-9]+)(?:\s*(-v))?(?=\W|$)/g, function(msg) {
         createCanduit(canduitConfig, function(err, conduit) {
             if (err) {
@@ -91,7 +192,6 @@ module.exports = function(robot) {
         if (brain_current !== null) {
             for (var k = 0; k <= Object.keys(brain_current).length; k++) {
                 if (k === Object.keys(brain_current).length) {
-                    console.log("using username: ", username);
                     createCanduit(canduitConfig, function(err, conduit) {
                         if (err) {
                             console.log("error:", err);
@@ -105,27 +205,22 @@ module.exports = function(robot) {
                                     return;
                                 } else {
                                     if (results.length === 1) {
-                                        //results[0];
-                                        conduit.exec('maniphest.query', {
-                                            ownerPHIDs: [results[0].phid],
-                                            status: "status-open"
-                                        }, function(error2, results2) {
-                                            if (error2) {
-                                                console.log("error2: ", error2);
-                                                return;
+                                        taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                            if (err2) {
+                                                console.log("error2: ", err2);
                                             } else {
-                                                //var sendResults = ["Showing Open Tasks for "+results[0].realName + " ("+username+")"];
-                                                msg.send("Showing Open Tasks for " + results[0].realName + " (" + username + ")");
-                                                var keys = Object.keys(results2);
-                                                for (var i = 0; i <= keys.length; i++) {
-                                                    if (i === keys.length) {
-                                                        return;
-                                                    } else {
-                                                        var info = results2[keys[i]];
-                                                        //sendResults.push("* "+info.objectName+" - "+info.title + ": "+info.uri);
-                                                        msg.send("* " + info.objectName + " - " + info.title + ": " + info.uri);
-                                                    }
+                                                if (robot.adapterName == "slack") {
+                                                    robot.emit('slack-attachment', {
+                                                        channel: msg.envelope.room,
+                                                        content: slackMessage,
+                                                        username: "hubot",
+                                                        text: ""
+                                                    });
+                                                } else {
+                                                    msg.send(slackMessage[0].title);
+                                                    msg.send(slackMessage[0].text);
                                                 }
+                                                return;
                                             }
                                         });
                                     } else {
@@ -155,27 +250,22 @@ module.exports = function(robot) {
                             return;
                         } else {
                             if (results.length === 1) {
-                                //results[0];
-                                conduit.exec('maniphest.query', {
-                                    ownerPHIDs: [results[0].phid],
-                                    status: "status-open"
-                                }, function(error2, results2) {
-                                    if (error2) {
-                                        console.log("error2: ", error2);
-                                        return;
+                                taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                    if (err2) {
+                                        console.log("error2: ", err2);
                                     } else {
-                                        //var sendResults = ["Showing Open Tasks for "+results[0].realName + " ("+username+")"];
-                                        msg.send("Showing Open Tasks for " + results[0].realName + " (" + username + ")");
-                                        var keys = Object.keys(results2);
-                                        for (var i = 0; i <= keys.length; i++) {
-                                            if (i === keys.length) {
-                                                return;
-                                            } else {
-                                                var info = results2[keys[i]];
-                                                //sendResults.push("* "+info.objectName+" - "+info.title + ": "+info.uri);
-                                                msg.send("* " + info.objectName + " - " + info.title + ": " + info.uri);
-                                            }
+                                        if (robot.adapterName == "slack") {
+                                            robot.emit('slack-attachment', {
+                                                channel: msg.envelope.room,
+                                                content: slackMessage,
+                                                username: "hubot",
+                                                text: ""
+                                            });
+                                        } else {
+                                            msg.send(slackMessage[0].title);
+                                            msg.send(slackMessage[0].text);
                                         }
+                                        return;
                                     }
                                 });
                             } else {

@@ -1,7 +1,7 @@
 {
   "name": "hubot-phab",
   "description": "Expansion to hubot-phabricator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Matt Martz <matt.martz@gmail.com>",
   "license": "MIT",
   "keywords": [
@@ -17,9 +17,11 @@
     "url": "https://github.com/oehokie/hubot-phab/issues"
   },
   "dependencies": {
-    "canduit": "~1.0.0"
+    "async": "^1.2.0",
+    "canduit": "~1.0.0",
+    "coffee-script": "~1.6"
   },
   "devDependencies": {},
-  "main": "index.js",
+  "main": "index.coffee",
   "scripts": {}
 }
