@@ -8,17 +8,12 @@ var canduitConfig = {
 };
 
 module.exports = function(robot) {
-    function taskQuery(conduit, user, msg, callback) {
+    function taskQuery(conduit, user, callback) {
         var pretext = "";
         if (user.tQindex && user.tQlength) {
             pretext = user.tQindex + " / " + user.tQlength + ": ";
         }
         var attachmentsObj = [{
-            //            color: "good",
-            //            pretext: user + " has helped me " + visitorCount + " times",
-            //            title: randomize(slackResponseTitle),
-            //            text: msg,
-            //            fallback: msg
         }];
         conduit.exec('maniphest.query', {
             ownerPHIDs: [user.phid],
@@ -32,11 +27,9 @@ module.exports = function(robot) {
                 if (keys.length === 0) {
                     attachmentsObj[0].color = "danger";
                     attachmentsObj[0].title = pretext + "No Open Tasks for " + user.realName + " (" + user.userName + ")";
-                    //msg.send(pretext + "No Open Tasks for " + user.realName + " (" + user.userName + ")");
                 } else {
                     attachmentsObj[0].color = "good";
                     attachmentsObj[0].title = pretext + "Showing Open Tasks for " + user.realName + " (" + user.userName + ")";
-                    //msg.send(pretext + "Showing Open Tasks for " + user.realName + " (" + user.userName + ")");
                 }
                 var body = "";
                 var newline = "";
@@ -50,7 +43,6 @@ module.exports = function(robot) {
                         var info = results2[keys[i]];
                         body += newline + "[] " + info.objectName + " - " + info.title + ": " + info.uri;
                         newline = "\n";
-                        //msg.send("[] " + info.objectName + " - " + info.title + ": " + info.uri);
                     }
                 }
             }
@@ -75,7 +67,7 @@ module.exports = function(robot) {
                             if (user.userName === 'admin') {
                                 cb();
                             } else {
-                                taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                taskQuery(conduit, user, function(err2, slackMessage) {
                                     if (err2) {
                                         console.log("error2: ", err2);
                                     } else {
@@ -205,7 +197,7 @@ module.exports = function(robot) {
                                     return;
                                 } else {
                                     if (results.length === 1) {
-                                        taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                        taskQuery(conduit, results[0], function(err2, slackMessage) {
                                             if (err2) {
                                                 console.log("error2: ", err2);
                                             } else {
@@ -250,7 +242,7 @@ module.exports = function(robot) {
                             return;
                         } else {
                             if (results.length === 1) {
-                                taskQuery(conduit, user, msg, function(err2, slackMessage) {
+                                taskQuery(conduit, results[0], function(err2, slackMessage) {
                                     if (err2) {
                                         console.log("error2: ", err2);
                                     } else {
