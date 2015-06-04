@@ -75,7 +75,7 @@ module.exports = function(robot) {
                                             robot.emit('slack-attachment', {
                                                 channel: msg.envelope.room,
                                                 content: slackMessage,
-                                                username: "hubot",
+                                                username: process.env.HUBOT_SLACK_BOTNAME,
                                                 text: ""
                                             });
                                         } else {
@@ -205,7 +205,7 @@ module.exports = function(robot) {
                                                     robot.emit('slack-attachment', {
                                                         channel: msg.envelope.room,
                                                         content: slackMessage,
-                                                        username: "hubot",
+                                                        username: process.env.HUBOT_SLACK_BOTNAME,
                                                         text: ""
                                                     });
                                                 } else {
@@ -250,7 +250,7 @@ module.exports = function(robot) {
                                             robot.emit('slack-attachment', {
                                                 channel: msg.envelope.room,
                                                 content: slackMessage,
-                                                username: "hubot",
+                                                username: process.env.HUBOT_SLACK_BOTNAME,
                                                 text: ""
                                             });
                                         } else {

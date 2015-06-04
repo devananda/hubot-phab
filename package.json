@@ -1,7 +1,7 @@
 {
   "name": "hubot-phab",
   "description": "Expansion to hubot-phabricator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Matt Martz <matt.martz@gmail.com>",
   "license": "MIT",
   "keywords": [
