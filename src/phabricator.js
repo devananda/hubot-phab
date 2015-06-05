@@ -1,3 +1,23 @@
+// Description
+//   A hubot script to check the status of phabricator tasks and expand information
+//
+// Configuration:
+//   HUBOT_PHABRICATOR_USER - user name of bot on phabricator
+//   HUBOT_PHABRICATOR_API - API address (example: phabricator.domain.com/api )
+//   HUBOT_PHABRICATOR_CERT - Cert from phabricator (can get through http://phabricator.domain.com/settings/panel/conduit/ )
+//   HUBOT_SLACK_BOTNAME - (Optional) Botname in slack
+//
+// Commands:
+//   something something T123 something something -> replies with T123 task title, link and status
+//   hubot show <username> tasks - shows tasks for that user
+//   hubot scrum - show open tasks for all users
+//
+// Notes:
+//   
+//
+// Author:
+//   oehokie
+
 var createCanduit = require('canduit');
 var async = require('async');
 
